@@ -1,0 +1,97 @@
+import { APILogger } from './logger';
+import { expect as baseExpect } from '@playwright/test';
+import { validateSchema } from './schema-validator';
+
+let apiLogger: APILogger
+
+declare global {
+  namespace PlaywrightTest {
+    interface Matchers<R, T> {
+      shouldEqual(expected: T): R;
+      shouldBeLessThanOrEqual(expected: T): R
+      shouldMatchSchema(dir:string, fileName:string, createSchemaFlag?: boolean): Promise<R>
+    }
+  }
+}
+
+export const setCustomExpectLogger = (logger: APILogger) => {
+    apiLogger = logger
+}
+
+export const expect = baseExpect.extend({
+    async shouldMatchSchema(recieved: any, dir:string, fileName:string, createSchemaFlag: boolean = false) {
+        let pass: boolean
+        let message: string=''
+        try {
+        await validateSchema(dir, fileName, recieved, createSchemaFlag) 
+        pass = true;
+        message = 'Schema validation passed'
+    } catch (e: any) {
+      pass = false;
+      const logs = apiLogger.getRecentLogs()
+      message = `${e.message}\n\nRecent API Activity:\n${logs}`
+    }
+    return {
+        message: ()=>message,
+        pass
+    }
+
+    },
+    shouldEqual(recieved: any, expected: any) {
+        let pass: boolean
+        let logs: string = ''
+
+        try {
+        baseExpect(recieved).toEqual(expected)
+        pass = true;
+        if(this.isNot){
+            logs=apiLogger.getRecentLogs()
+        }
+    } catch (e: any) {
+      pass = false;
+      logs = apiLogger.getRecentLogs()
+    }
+
+    const hint = this.isNot ? 'not':''
+    const message = this.utils.matcherHint('shouldEqual', undefined, undefined, { isNot: this.isNot }) +
+          '\n\n' +
+          `Expected: ${hint} ${this.utils.printExpected(expected)}\n` +
+          `Received: ${this.utils.printReceived(recieved)}\n\n` + 
+          `Recent API Activity:\n${logs}`
+
+    return {
+        message: ()=>message,
+        pass
+    }
+
+    },
+
+    shouldBeLessThanOrEqual(recieved: any, expected: any) {
+        let pass: boolean
+        let logs: string = ''
+
+        try {
+        baseExpect(recieved).toBeLessThanOrEqual(expected)
+        pass = true;
+        if(this.isNot){
+            logs=apiLogger.getRecentLogs()
+        }
+    } catch (e: any) {
+      pass = false;
+      logs = apiLogger.getRecentLogs()
+    }
+
+    const hint = this.isNot ? 'not':''
+    const message = this.utils.matcherHint('shouldBeLessThanOrEqual', undefined, undefined, { isNot: this.isNot }) +
+          '\n\n' +
+          `Expected: ${hint} ${this.utils.printExpected(expected)}\n` +
+          `Received: ${this.utils.printReceived(recieved)}\n\n` + 
+          `Recent API Activity:\n${logs}`
+
+    return {
+        message: ()=>message,
+        pass
+    }
+
+    }
+})
