@@ -16,6 +16,18 @@ This repository shows my practice work and is still evolving. It is not a produc
 - Adding `date-time` formats to nested `createdAt` and `updatedAt` fields.
 - Test data generation with Faker.
 - A browser scenario for creating and deleting an article.
+- AI-assisted test development using reusable prompts and schema validation instructions, following the course's Copilot exercises.
+
+## AI-assisted development practice
+
+The course includes GitHub Copilot workflows. This repository contains prompt and instruction examples for practising how to guide AI when updating API tests:
+
+- [`add-schemas.prompt.txt`](add-schemas.prompt.txt): asks the assistant to add `shouldMatchSchema()` assertions after GET, POST, and PUT requests, skip DELETE requests and existing schema assertions, and enable schema generation.
+- [`schema-validation.instructions.txt`](schema-validation.instructions.txt): defines schema naming conventions, assertion placement, method arguments, and examples so the assistant can make consistent changes.
+
+These are saved learning examples in `.txt` files, rather than automatically configured Copilot instruction files. The prompt retains a course-style reference to an instructions path; the instruction example in this repository is linked above.
+
+AI assistance has also been used to explain code and help implement changes. Generated schemas and assertions require review: matching a generated schema alone does not establish that an API response is correct.
 
 ## Project structure
 
