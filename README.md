@@ -67,4 +67,6 @@ The tests create, update, and delete demo data. Use a dedicated test account. Lo
 
 ## Learning context
 
+Course: [Playwright API Testing Mastery with TypeScript](https://www.udemy.com/course/playwright-api-testing-mastery-with-typescript/) by Artem Bondar on Udemy.
+
 The implementation follows course exercises and includes an instructor-style reference example. I use this repository to practise the code, understand the design decisions, and discuss the tradeoffs during interviews.
